@@ -42,17 +42,22 @@
         android:text="HeadLines of the news"
         android:textSize="16dp"
         android:layout_marginStart="10dp"
+        app:layout_constraintBottom_toTopOf="@id/tvDeleteItem"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/iv_image"
-        app:layout_constraintTop_toBottomOf="@id/tv_Header" />
-<!--    <View-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="2dp"-->
-<!--        android:layout_marginStart="10dp"-->
-<!--        android:layout_marginEnd="10dp"-->
-<!--        android:background="@color/black"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"/>-->
+        app:layout_constraintTop_toBottomOf="@id/tv_Header"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/tvDeleteItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:textColor="@color/purple_500"
+        android:layout_marginStart="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

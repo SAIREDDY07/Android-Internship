@@ -10,36 +10,46 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.googlenews.DataModel.DataModel
 
-class MyAdapter (var titles:List<String>,
-                 var details:List<String>,
-                 var image:List<String>,
-                 var links:List<String>): RecyclerView.Adapter<MyAdapter.ViewHolder>() {
-   inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class MyAdapter(var dataholder: ArrayList<DataModel>,val onclicklistener:onDeleteListener) :
+    RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+    inner class ViewHolder(itemView: View,onitemclicklistener:onDeleteListener) : RecyclerView.ViewHolder(itemView) {
         val itemImage: ImageView = itemView.findViewById(R.id.iv_image)
         val itemTitle: TextView = itemView.findViewById(R.id.tv_Header)
-        val itemDetails: TextView =itemView.findViewById(R.id.tv_HeadLines)
-        init{
+        val itemDetails: TextView = itemView.findViewById(R.id.tv_HeadLines)
+        val deleteItem: TextView = itemView.findViewById(R.id.tvDeleteItem)
+
+        init {
             itemView.setOnClickListener {
-                val position:Int =adapterPosition
+                val position: Int = adapterPosition
                 val intent = Intent(Intent.ACTION_VIEW)
-                intent.data= Uri.parse(links[position])
-                startActivity(itemView.context,intent,null)
+                intent.data = Uri.parse(dataholder[position].links.toString())
+                startActivity(itemView.context, intent, null)
+            }
+            deleteItem.setOnClickListener{
+                onitemclicklistener.deleteItem(adapterPosition)
+                notifyItemChanged(adapterPosition)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-val v = LayoutInflater.from(parent.context).inflate(R.layout.cardview_item,parent,false)
-        return ViewHolder(v)
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.cardview_item, parent, false)
+        return ViewHolder(v,onclicklistener)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-holder.itemTitle.text=titles[position]
-        holder.itemDetails.text=details[position]
-        Glide.with(holder.itemImage).load(image[position]).into(holder.itemImage)
+        holder.itemTitle.text = dataholder[position].titles.toString()
+        holder.itemDetails.text = dataholder[position].details.toString()
+        Glide.with(holder.itemImage).load(dataholder[position].image).into(holder.itemImage)
+
     }
 
     override fun getItemCount(): Int {
-return  titles.size    }
+        return dataholder.size
+    }
+    interface onDeleteListener {
+        fun deleteItem(position: Int)
+    }
 }
