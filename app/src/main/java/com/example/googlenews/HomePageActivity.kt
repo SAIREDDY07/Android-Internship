@@ -3,6 +3,9 @@ package com.example.googlenews
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlenews.DataModel.DataModel
@@ -17,7 +20,7 @@ const val BASE_URL = "https://newsapi.org"
 
 class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
     lateinit var recyclerView: RecyclerView
-
+lateinit var toolbar: Toolbar
     //    private var titleList =mutableListOf<String>()
 //    private var detailsList =mutableListOf<String>()
 //    private var imagesList =mutableListOf<String>()
@@ -29,8 +32,8 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
         recyclerView = findViewById(R.id.rv)
         dataholder = ArrayList()
         makeApiRequest()
-
     }
+
 
     private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(applicationContext)
@@ -60,6 +63,7 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
                 }
                 withContext(Dispatchers.Main) {
                     setupRecyclerView()
+
                 }
             } catch (e: Exception) {
                 Log.e("HomePageActivity", e.toString())
@@ -69,17 +73,8 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
 
     override fun deleteItem(position: Int) {
         dataholder.removeAt(position)
+        Log.e("DataSize", dataholder.size.toString())
+
     }
 }
 
-//    mDeleteImage.setOnClickListener(new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-//            if (listener != null) {
-//                int position = getAdapterPosition();
-//                if (position != RecyclerView.NO_POSITION) {
-//                    listener.onDeleteClick(position);
-//                }
-//            }
-//        }
-//    });

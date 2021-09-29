@@ -29,7 +29,7 @@ class MyAdapter(var dataholder: ArrayList<DataModel>,val onclicklistener:onDelet
             }
             deleteItem.setOnClickListener{
                 onitemclicklistener.deleteItem(adapterPosition)
-                notifyItemChanged(adapterPosition)
+                notifyDataSetChanged()
             }
         }
     }

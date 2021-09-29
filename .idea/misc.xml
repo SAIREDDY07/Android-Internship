@@ -3,10 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Sunil/AndroidStudioProjects/Tasks/GoogleNews/app/src/main/res/layout/activity_home_page.xml" value="0.1" />
+        <entry key="..\:/Users/Sunil/AndroidStudioProjects/Tasks/GoogleNews/app/src/main/res/drawable/ic_baseline_delete_24.xml" value="0.2125" />
+        <entry key="..\:/Users/Sunil/AndroidStudioProjects/Tasks/GoogleNews/app/src/main/res/layout/activity_home_page.xml" value="0.22" />
         <entry key="..\:/Users/Sunil/AndroidStudioProjects/Tasks/GoogleNews/app/src/main/res/layout/activity_login.xml" value="0.22" />
         <entry key="..\:/Users/Sunil/AndroidStudioProjects/Tasks/GoogleNews/app/src/main/res/layout/activity_main.xml" value="0.17760416666666667" />
         <entry key="..\:/Users/Sunil/AndroidStudioProjects/Tasks/GoogleNews/app/src/main/res/layout/cardview_item.xml" value="0.33" />
+        <entry key="..\:/Users/Sunil/AndroidStudioProjects/Tasks/GoogleNews/app/src/main/res/menu/menu.xml" value="0.19635416666666666" />
       </map>
     </option>
   </component>

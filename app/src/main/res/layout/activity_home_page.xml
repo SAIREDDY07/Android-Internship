@@ -21,13 +21,15 @@
             android:text="Google News"
             android:textSize="26sp"
             android:textStyle="bold" />
+
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:listitem="@layout/cardview_item"
-        app:layout_constraintTop_toBottomOf="@id/Toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/Toolbar"
+        tools:layout_editor_absoluteX="-30dp"
+        tools:listitem="@layout/cardview_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
