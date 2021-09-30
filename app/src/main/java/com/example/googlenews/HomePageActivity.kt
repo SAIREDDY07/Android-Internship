@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.CheckBox
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.googlenews.DataModel.DataModel
@@ -39,6 +40,7 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
     lateinit var ch3: CheckBox
     lateinit var ch4: CheckBox
     lateinit var apply: Button
+    lateinit var clear : Button
     lateinit var madapter: MyAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,23 +56,38 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
         }
         apply.setOnClickListener {
             if (ch1.isChecked()) {
-
                 Collections.sort(dataholder, dateAscendingComparator)
                 Log.e("debug", "clicked")
                 madapter.notifyDataSetChanged()
+                bottomsheet.dismiss()
             }
             if (ch2.isChecked()) {
                 Collections.sort(dataholder, dateDescendingComparator)
                 madapter.notifyDataSetChanged()
+                bottomsheet.dismiss()
+
             }
             if (ch3.isChecked()) {
                 Collections.sort(dataholder, titleAscendingComparator)
                 madapter.notifyDataSetChanged()
+                bottomsheet.dismiss()
+
             }
             if (ch4.isChecked()) {
                 Collections.sort(dataholder, titleDescendingComparator)
                 madapter.notifyDataSetChanged()
+                bottomsheet.dismiss()
+
             }
+            else{
+                bottomsheet.dismiss()
+            }
+        }
+        clear.setOnClickListener {
+            ch1.setChecked(false)
+            ch2.setChecked(false)
+            ch3.setChecked(false)
+            ch4.setChecked(false)
         }
     }
 
@@ -83,7 +100,7 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
         ch3 = v.findViewById(R.id.titleAscending)
         ch4 = v.findViewById(R.id.titledescending)
         apply = v.findViewById(R.id.btnApply)
-        val clear: Button = v.findViewById(R.id.btnClear)
+        clear= v.findViewById(R.id.btnClear)
         bottomsheet.setContentView(v)
 
     }
