@@ -18,13 +18,14 @@ class MyAdapter(var dataholder: ArrayList<DataModel>,val onclicklistener:onDelet
         val itemImage: ImageView = itemView.findViewById(R.id.iv_image)
         val itemTitle: TextView = itemView.findViewById(R.id.tv_Header)
         val itemDetails: TextView = itemView.findViewById(R.id.tv_HeadLines)
+        val date: TextView = itemView.findViewById(R.id.tvdate)
         val deleteItem: TextView = itemView.findViewById(R.id.tvDeleteItem)
 
         init {
             itemView.setOnClickListener {
                 val position: Int = adapterPosition
                 val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse(dataholder[position].links.toString())
+                intent.data = Uri.parse(dataholder[position].links)
                 startActivity(itemView.context, intent, null)
             }
             deleteItem.setOnClickListener{
@@ -43,7 +44,7 @@ class MyAdapter(var dataholder: ArrayList<DataModel>,val onclicklistener:onDelet
         holder.itemTitle.text = dataholder[position].titles.toString()
         holder.itemDetails.text = dataholder[position].details.toString()
         Glide.with(holder.itemImage).load(dataholder[position].image).into(holder.itemImage)
-
+        holder.date.text=dataholder[position].dateandtime
     }
 
     override fun getItemCount(): Int {
@@ -52,4 +53,5 @@ class MyAdapter(var dataholder: ArrayList<DataModel>,val onclicklistener:onDelet
     interface onDeleteListener {
         fun deleteItem(position: Int)
     }
+
 }

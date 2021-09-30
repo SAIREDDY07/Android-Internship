@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 
 class MainActivity : AppCompatActivity() {
-    val SPLASH_TIME_OUT:Int =4000
+    val SPLASH_TIME_OUT:Int =1000
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

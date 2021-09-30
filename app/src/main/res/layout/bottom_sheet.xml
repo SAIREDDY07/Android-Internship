@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:layout_editor_absoluteX="0dp"
+    android:background="@drawable/rounded_edge"
+    tools:layout_editor_absoluteY="-11dp">
+
+    <TextView
+        android:id="@+id/tvsortbydate"
+        android:layout_width="94dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginLeft="12dp"
+        android:text="Sort by date"
+        app:layout_constraintBaseline_toBaselineOf="@+id/dateAscending"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <CheckBox
+        android:id="@+id/dateAscending"
+        android:layout_width="115dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="8dp"
+        android:text="Ascending"
+        app:layout_constraintLeft_toRightOf="@id/tvsortbydate"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/datedescending"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="8dp"
+        android:text="Descending"
+        app:layout_constraintLeft_toRightOf="@id/dateAscending"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvsortbytitle"
+        android:layout_width="89dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Sort by title"
+        app:layout_constraintBaseline_toBaselineOf="@+id/titleAscending"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/titleAscending" />
+
+    <CheckBox
+        android:id="@+id/titleAscending"
+        android:layout_width="115dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="8dp"
+        android:text="Ascending"
+        app:layout_constraintLeft_toRightOf="@id/tvsortbytitle"
+        app:layout_constraintTop_toBottomOf="@id/dateAscending" />
+
+    <CheckBox
+        android:id="@+id/titledescending"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Descending"
+        app:layout_constraintLeft_toRightOf="@id/titleAscending"
+        app:layout_constraintTop_toBottomOf="@id/datedescending" />
+
+    <Button
+        android:id="@+id/btnApply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apply"
+        app:layout_constraintBaseline_toBaselineOf="@+id/btnClear"
+        app:layout_constraintEnd_toStartOf="@+id/btnClear"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginBottom="512dp"
+        android:text="Clear"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnApply"
+        app:layout_constraintTop_toBottomOf="@id/titledescending" />
+</androidx.constraintlayout.widget.ConstraintLayout>
