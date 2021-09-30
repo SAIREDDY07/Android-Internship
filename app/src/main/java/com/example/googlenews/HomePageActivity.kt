@@ -39,21 +39,14 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
     lateinit var ch3: CheckBox
     lateinit var ch4: CheckBox
     lateinit var apply: Button
-    lateinit var adapter: MyAdapter
-
+    lateinit var madapter: MyAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_page)
         recyclerView = findViewById(R.id.rv)
         val floatingButton: FloatingActionButton = findViewById(R.id.fabFilter)
-        apply = findViewById(R.id.btnApply)
-        val clear: Button = findViewById(R.id.btnClear)
-        ch1 = findViewById(R.id.dateAscending)
-        ch2 = findViewById(R.id.datedescending)
-        ch3 = findViewById(R.id.titleAscending)
-        ch4 = findViewById(R.id.titledescending)
-
         dataholder = ArrayList()
+        madapter = MyAdapter(dataholder, this)
         makeApiRequest()
         createBottomSheet()
         floatingButton.setOnClickListener {
@@ -61,20 +54,22 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
         }
         apply.setOnClickListener {
             if (ch1.isChecked()) {
+
                 Collections.sort(dataholder, dateAscendingComparator)
-                adapter.notifyDataSetChanged()
+                Log.e("debug", "clicked")
+                madapter.notifyDataSetChanged()
             }
             if (ch2.isChecked()) {
                 Collections.sort(dataholder, dateDescendingComparator)
-                adapter.notifyDataSetChanged()
+                madapter.notifyDataSetChanged()
             }
             if (ch3.isChecked()) {
                 Collections.sort(dataholder, titleAscendingComparator)
-                adapter.notifyDataSetChanged()
+                madapter.notifyDataSetChanged()
             }
             if (ch4.isChecked()) {
                 Collections.sort(dataholder, titleDescendingComparator)
-                adapter.notifyDataSetChanged()
+                madapter.notifyDataSetChanged()
             }
         }
     }
@@ -83,13 +78,19 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
     private fun createBottomSheet() {
         val v = LayoutInflater.from(this).inflate(R.layout.bottom_sheet, null)
         bottomsheet = BottomSheetDialog(this)
+        ch1 = v.findViewById(R.id.dateAscending)
+        ch2 = v.findViewById(R.id.datedescending)
+        ch3 = v.findViewById(R.id.titleAscending)
+        ch4 = v.findViewById(R.id.titledescending)
+        apply = v.findViewById(R.id.btnApply)
+        val clear: Button = v.findViewById(R.id.btnClear)
         bottomsheet.setContentView(v)
 
     }
 
     private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(applicationContext)
-        recyclerView.adapter = MyAdapter(dataholder, this)
+        recyclerView.adapter = madapter
     }
 
     private fun addToList(
