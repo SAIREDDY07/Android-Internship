@@ -9,6 +9,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,6 +45,7 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
     lateinit var ch4: CheckBox
     lateinit var apply: Button
     lateinit var clear: Button
+lateinit var count:TextView
     lateinit var madapter: MyAdapter
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +55,7 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
         val floatingButton: FloatingActionButton = findViewById(R.id.fabFilter)
         dataholder = ArrayList()
         tempDH=ArrayList()
+        count=findViewById(R.id.itemcount)
         madapter = MyAdapter(dataholder, this)
         makeApiRequest()
         createBottomSheet()
@@ -84,11 +88,14 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
 
                 }
                 else -> {
-
-                    dataholder = tempDH
+//                    madapter
+                    dataholder.clear()
+                    dataholder.addAll(tempDH)
+                    //dataholder = tempDH
                     Log.e("debug-> dataholder", dataholder.size.toString())
                     Log.e("debug -> tempDH", tempDH.size.toString())
                     madapter.notifyDataSetChanged()
+               //     Toast.makeText(this,dataholder.size,Toast.LENGTH_LONG).show()
                     bottomsheet.dismiss()
                 }
 
@@ -119,6 +126,7 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
     }
 
     private fun setupRecyclerView() {
+        count.setText(dataholder.size.toString())
         recyclerView.layoutManager = LinearLayoutManager(applicationContext)
         recyclerView.adapter = madapter
     }
@@ -132,7 +140,6 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
     ) {
         dataholder.add(DataModel(title, details, image, link, dateandtime))
         tempDH.add(DataModel(title, details, image, link, dateandtime))
-
     }
 
     private fun makeApiRequest() {
@@ -152,7 +159,7 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
                         article.url,
                         article.publishedAt
                     )
-                    Log.i("HomePageActivity", "Result=$article")
+//                    Log.i("HomePageActivity", "Result=$article")
                 }
                 withContext(Dispatchers.Main) {
                     setupRecyclerView()
@@ -166,6 +173,8 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
 
     override fun deleteItem(position: Int) {
         dataholder.removeAt(position)
+        count.setText(dataholder.size.toString())
+        tempDH.removeAt(position)
         Log.e("DataSize", dataholder.size.toString())
 
     }
