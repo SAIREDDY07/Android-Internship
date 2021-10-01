@@ -1,5 +1,6 @@
 package com.example.googlenews
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -35,19 +36,22 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
     lateinit var recyclerView: RecyclerView
     lateinit var bottomsheet: BottomSheetDialog
     private lateinit var dataholder: ArrayList<DataModel>
+  private lateinit var tempDH: ArrayList<DataModel>
     lateinit var ch1: CheckBox
     lateinit var ch2: CheckBox
     lateinit var ch3: CheckBox
     lateinit var ch4: CheckBox
     lateinit var apply: Button
-    lateinit var clear : Button
+    lateinit var clear: Button
     lateinit var madapter: MyAdapter
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_page)
         recyclerView = findViewById(R.id.rv)
         val floatingButton: FloatingActionButton = findViewById(R.id.fabFilter)
         dataholder = ArrayList()
+        tempDH=ArrayList()
         madapter = MyAdapter(dataholder, this)
         makeApiRequest()
         createBottomSheet()
@@ -55,39 +59,48 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
             bottomsheet.show()
         }
         apply.setOnClickListener {
-            if (ch1.isChecked()) {
-                Collections.sort(dataholder, dateAscendingComparator)
-                Log.e("debug", "clicked")
-                madapter.notifyDataSetChanged()
-                bottomsheet.dismiss()
-            }
-            if (ch2.isChecked()) {
-                Collections.sort(dataholder, dateDescendingComparator)
-                madapter.notifyDataSetChanged()
-                bottomsheet.dismiss()
+            when {
+                ch1.isChecked() -> {
+                    Collections.sort(dataholder, dateAscendingComparator)
+                    madapter.notifyDataSetChanged()
+                    bottomsheet.dismiss()
+                }
+                ch2.isChecked() -> {
+                    Collections.sort(dataholder, dateDescendingComparator)
+                    madapter.notifyDataSetChanged()
+                    bottomsheet.dismiss()
+
+                }
+                ch3.isChecked() -> {
+                    Collections.sort(dataholder, titleAscendingComparator)
+                    madapter.notifyDataSetChanged()
+                    bottomsheet.dismiss()
+
+                }
+                ch4.isChecked() -> {
+                    Collections.sort(dataholder, titleDescendingComparator)
+                    madapter.notifyDataSetChanged()
+                    bottomsheet.dismiss()
+
+                }
+                else -> {
+
+                    dataholder = tempDH
+                    Log.e("debug-> dataholder", dataholder.size.toString())
+                    Log.e("debug -> tempDH", tempDH.size.toString())
+                    madapter.notifyDataSetChanged()
+                    bottomsheet.dismiss()
+                }
 
             }
-            if (ch3.isChecked()) {
-                Collections.sort(dataholder, titleAscendingComparator)
-                madapter.notifyDataSetChanged()
-                bottomsheet.dismiss()
 
-            }
-            if (ch4.isChecked()) {
-                Collections.sort(dataholder, titleDescendingComparator)
-                madapter.notifyDataSetChanged()
-                bottomsheet.dismiss()
-
-            }
-            else{
-                bottomsheet.dismiss()
-            }
         }
         clear.setOnClickListener {
             ch1.setChecked(false)
             ch2.setChecked(false)
             ch3.setChecked(false)
             ch4.setChecked(false)
+
         }
     }
 
@@ -100,7 +113,7 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
         ch3 = v.findViewById(R.id.titleAscending)
         ch4 = v.findViewById(R.id.titledescending)
         apply = v.findViewById(R.id.btnApply)
-        clear= v.findViewById(R.id.btnClear)
+        clear = v.findViewById(R.id.btnClear)
         bottomsheet.setContentView(v)
 
     }
@@ -118,10 +131,8 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
         dateandtime: String
     ) {
         dataholder.add(DataModel(title, details, image, link, dateandtime))
-//        titleList.add(title)
-//        detailsList.add(details)
-//        imagesList.add(image)
-//        linksList.add(link)
+        tempDH.add(DataModel(title, details, image, link, dateandtime))
+
     }
 
     private fun makeApiRequest() {
@@ -134,7 +145,6 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
             try {
                 val response = api.getNews()
                 for (article in response.articles) {
-                    Log.i("HomePageActivity", "Result=$article")
                     addToList(
                         article.title,
                         article.description,
@@ -142,6 +152,7 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
                         article.url,
                         article.publishedAt
                     )
+                    Log.i("HomePageActivity", "Result=$article")
                 }
                 withContext(Dispatchers.Main) {
                     setupRecyclerView()
