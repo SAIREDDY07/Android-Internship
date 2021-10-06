@@ -5,16 +5,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
-import androidx.core.view.isVisible
+import android.view.View
+import android.widget.*
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.filter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.googlenews.Api.Article
 import com.example.googlenews.DataModel.DataModel
 import com.example.googlenews.DataModel.DataModel.Companion.dateAscendingComparator
 import com.example.googlenews.DataModel.DataModel.Companion.dateDescendingComparator
@@ -24,41 +24,73 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okio.Utf8.size
+import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.text.SimpleDateFormat
+import retrofit2.converter.gson.GsonConverterFactory.create
+import java.net.URI.create
+import java.nio.file.Files.size
 import java.util.*
 import kotlin.collections.ArrayList
 
-const val BASE_URL = "https://newsapi.org"
 
 class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
     lateinit var recyclerView: RecyclerView
     lateinit var bottomsheet: BottomSheetDialog
     private lateinit var dataholder: ArrayList<DataModel>
-  private lateinit var tempDH: ArrayList<DataModel>
+    private lateinit var tempDH: ArrayList<DataModel>
     lateinit var ch1: CheckBox
     lateinit var ch2: CheckBox
     lateinit var ch3: CheckBox
     lateinit var ch4: CheckBox
     lateinit var apply: Button
     lateinit var clear: Button
-lateinit var count:TextView
+    lateinit var count: TextView
     lateinit var madapter: MyAdapter
+
+
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_page)
         recyclerView = findViewById(R.id.rv)
         val floatingButton: FloatingActionButton = findViewById(R.id.fabFilter)
+        val load: ProgressBar =findViewById(R.id.loadprogressbar)
         dataholder = ArrayList()
-        tempDH=ArrayList()
-        count=findViewById(R.id.itemcount)
-        madapter = MyAdapter(dataholder, this)
+        tempDH = ArrayList()
+        count = findViewById(R.id.itemcount)
+        madapter = MyAdapter( this)
         makeApiRequest()
+        setupRecyclerView()
         createBottomSheet()
+        madapter.addLoadStateListener {loadState ->
+
+
+
+            if (loadState.refresh is LoadState.Loading){
+                load.visibility = View.VISIBLE
+            }
+            else{
+                load.visibility = View.GONE
+
+                // getting the error
+                val error = when {
+                    loadState.prepend is LoadState.Error -> loadState.prepend as LoadState.Error
+                    loadState.append is LoadState.Error -> loadState.append as LoadState.Error
+                    loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
+                    else -> null
+                }
+//                errorState?.let {
+//                    Toast.makeText(this, it.error.message, Toast.LENGTH_LONG).show()
+//                }
+            }
+
+        }
         floatingButton.setOnClickListener {
             bottomsheet.show()
         }
@@ -95,7 +127,7 @@ lateinit var count:TextView
                     Log.e("debug-> dataholder", dataholder.size.toString())
                     Log.e("debug -> tempDH", tempDH.size.toString())
                     madapter.notifyDataSetChanged()
-               //     Toast.makeText(this,dataholder.size,Toast.LENGTH_LONG).show()
+                    //     Toast.makeText(this,dataholder.size,Toast.LENGTH_LONG).show()
                     bottomsheet.dismiss()
                 }
 
@@ -126,8 +158,8 @@ lateinit var count:TextView
     }
 
     private fun setupRecyclerView() {
-        count.setText(dataholder.size.toString())
         recyclerView.layoutManager = LinearLayoutManager(applicationContext)
+
         recyclerView.adapter = madapter
     }
 
@@ -143,30 +175,43 @@ lateinit var count:TextView
     }
 
     private fun makeApiRequest() {
-        val api = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiInterface::class.java)
-        GlobalScope.launch(Dispatchers.IO) {
-            try {
-                val response = api.getNews()
-                for (article in response.articles) {
-                    addToList(
-                        article.title,
-                        article.description,
-                        article.urlToImage,
-                        article.url,
-                        article.publishedAt
-                    )
-//                    Log.i("HomePageActivity", "Result=$article")
-                }
-                withContext(Dispatchers.Main) {
-                    setupRecyclerView()
 
-                }
-            } catch (e: Exception) {
-                Log.e("HomePageActivity", e.toString())
+//            var apiInterface:ApiInterface=api.create(ApiInterface::class.java)
+//        var call : Call<String> =apiInterface.STRING_CALL(page, limit)
+//        call.enqueue(Callback<String>(){
+//            override fun onResponse(call)
+//        }
+//        GlobalScope.launch(Dispatchers.IO) {
+//            try {
+//                val response = api.getNews(page, limit)
+//                      for(article in response.article)
+//        {
+//            addToList(
+//                        article.title,
+//                        article.description,
+//                        article.urlToImage,
+//                        article.url,
+//                        article.publishedAt
+//                    )
+//        }
+////                    Log.i("HomePageActivity", "Result=$article")
+//                }
+//                withContext(Dispatchers.Main) {
+//                    setupRecyclerView()
+//
+//                }
+//            } catch (e: Exception) {
+//                Log.e("HomePageActivity", e.toString())
+//            }
+//        }
+        val viewModel  = ViewModelProvider(this).get(HomePageViewModelActivity::class.java)
+        lifecycleScope.launchWhenCreated {
+            viewModel.getList().collectLatest   {
+//                count.setText()
+                madapter.submitData(it.filter { it })
+                //var visibleItemCount: Int = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() - (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+              //  count.setText(visibleItemCount.toString())
+
             }
         }
     }

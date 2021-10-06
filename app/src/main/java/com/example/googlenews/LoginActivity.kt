@@ -7,10 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -25,6 +22,7 @@ class LoginActivity : AppCompatActivity() {
     lateinit var mPassword: EditText
     lateinit var firebase: FirebaseAuth
     lateinit var mAuth: FirebaseAuth
+    lateinit var progressBar: ProgressBar
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +31,7 @@ class LoginActivity : AppCompatActivity() {
         mPassword = findViewById(R.id.etPassword)
         mbutton = findViewById(R.id.button)
         mbtngoogle = findViewById(R.id.ivGoogle)
+        progressBar= findViewById(R.id.LoginProgressBar)
         mAuth = FirebaseAuth.getInstance()
         createRequest()
         firebase = FirebaseAuth.getInstance()
@@ -54,6 +53,7 @@ class LoginActivity : AppCompatActivity() {
         mbtngoogle.setOnClickListener(View.OnClickListener {
             //TODO Check google playservices is updated or not or Exist
             val signInIntent = mGoogleSignInClient.signInIntent
+            progressBar.visibility=View.VISIBLE
             startActivityForResult(signInIntent, RC_SIGN_IN)
             Log.e("DEBUG", "START-ONCLICK")
         })
@@ -95,9 +95,11 @@ class LoginActivity : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     val user = mAuth.currentUser
                     Log.w(ContentValues.TAG, "signInWithCredential:Successful ", task.exception)
+                    progressBar.visibility=View.GONE
                     val intent = Intent(applicationContext, HomePageActivity::class.java)
                     startActivity(intent)
                 } else {
+                    progressBar.visibility=View.GONE
                     // If sign in fails, display a message to the user.
                     Log.w(ContentValues.TAG, "signInWithCredential:failure ", task.exception)
                 }
