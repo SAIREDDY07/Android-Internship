@@ -208,7 +208,7 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
         lifecycleScope.launchWhenCreated {
             viewModel.getList().collectLatest   {
 //                count.setText()
-                madapter.submitData(it.filter { it })
+                madapter.submitData(it)
                 //var visibleItemCount: Int = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() - (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
               //  count.setText(visibleItemCount.toString())
 
