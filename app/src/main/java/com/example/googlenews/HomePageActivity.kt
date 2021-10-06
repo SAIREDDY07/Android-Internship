@@ -65,7 +65,7 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
         tempDH = ArrayList()
         count = findViewById(R.id.itemcount)
         madapter = MyAdapter( this)
-        makeApiRequest()
+        makeApiRequest("")
         setupRecyclerView()
         createBottomSheet()
         madapter.addLoadStateListener {loadState ->
@@ -95,44 +95,27 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
             bottomsheet.show()
         }
         apply.setOnClickListener {
-            when {
-                ch1.isChecked() -> {
-                    Collections.sort(dataholder, dateAscendingComparator)
-                    madapter.notifyDataSetChanged()
+            when{
+                ch1.isChecked ->{
+                    makeApiRequest("publishedAt")
                     bottomsheet.dismiss()
                 }
-                ch2.isChecked() -> {
-                    Collections.sort(dataholder, dateDescendingComparator)
-                    madapter.notifyDataSetChanged()
+                ch2.isChecked ->{
+                    makeApiRequest("relevancy")
                     bottomsheet.dismiss()
 
                 }
-                ch3.isChecked() -> {
-                    Collections.sort(dataholder, titleAscendingComparator)
-                    madapter.notifyDataSetChanged()
+                ch3.isChecked ->{
+                    makeApiRequest("popularity")
                     bottomsheet.dismiss()
 
                 }
-                ch4.isChecked() -> {
-                    Collections.sort(dataholder, titleDescendingComparator)
-                    madapter.notifyDataSetChanged()
+                else ->{
+                    makeApiRequest("")
                     bottomsheet.dismiss()
 
                 }
-                else -> {
-//                    madapter
-                    dataholder.clear()
-                    dataholder.addAll(tempDH)
-                    //dataholder = tempDH
-                    Log.e("debug-> dataholder", dataholder.size.toString())
-                    Log.e("debug -> tempDH", tempDH.size.toString())
-                    madapter.notifyDataSetChanged()
-                    //     Toast.makeText(this,dataholder.size,Toast.LENGTH_LONG).show()
-                    bottomsheet.dismiss()
-                }
-
             }
-
         }
         clear.setOnClickListener {
             ch1.setChecked(false)
@@ -150,7 +133,7 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
         ch1 = v.findViewById(R.id.dateAscending)
         ch2 = v.findViewById(R.id.datedescending)
         ch3 = v.findViewById(R.id.titleAscending)
-        ch4 = v.findViewById(R.id.titledescending)
+       // ch4 = v.findViewById(R.id.titledescending)
         apply = v.findViewById(R.id.btnApply)
         clear = v.findViewById(R.id.btnClear)
         bottomsheet.setContentView(v)
@@ -174,7 +157,27 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
         tempDH.add(DataModel(title, details, image, link, dateandtime))
     }
 
-    private fun makeApiRequest() {
+    private fun makeApiRequest(value:String) {
+
+        val viewModel  = ViewModelProvider(this).get(HomePageViewModelActivity::class.java)
+        lifecycleScope.launchWhenCreated {
+            viewModel.getList(value).collectLatest   {
+                madapter.submitData(it)
+            }
+        }
+    }
+
+    override fun deleteItem(position: Int) {
+        dataholder.removeAt(position)
+        count.setText(dataholder.size.toString())
+        tempDH.removeAt(position)
+        Log.e("DataSize", dataholder.size.toString())
+
+    }
+
+
+}
+
 
 //            var apiInterface:ApiInterface=api.create(ApiInterface::class.java)
 //        var call : Call<String> =apiInterface.STRING_CALL(page, limit)
@@ -204,26 +207,43 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
 //                Log.e("HomePageActivity", e.toString())
 //            }
 //        }
-        val viewModel  = ViewModelProvider(this).get(HomePageViewModelActivity::class.java)
-        lifecycleScope.launchWhenCreated {
-            viewModel.getList().collectLatest   {
-//                count.setText()
-                madapter.submitData(it)
-                //var visibleItemCount: Int = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() - (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-              //  count.setText(visibleItemCount.toString())
-
-            }
-        }
-    }
-
-    override fun deleteItem(position: Int) {
-        dataholder.removeAt(position)
-        count.setText(dataholder.size.toString())
-        tempDH.removeAt(position)
-        Log.e("DataSize", dataholder.size.toString())
-
-    }
-
-
-}
-
+//apply.setOnClickListener {
+//    when {
+//        ch1.isChecked() -> {
+//            Collections.sort(dataholder, dateAscendingComparator)
+//            madapter.notifyDataSetChanged()
+//            bottomsheet.dismiss()
+//        }
+//        ch2.isChecked() -> {
+//            Collections.sort(dataholder, dateDescendingComparator)
+//            madapter.notifyDataSetChanged()
+//            bottomsheet.dismiss()
+//
+//        }
+//        ch3.isChecked() -> {
+//            Collections.sort(dataholder, titleAscendingComparator)
+//            madapter.notifyDataSetChanged()
+//            bottomsheet.dismiss()
+//
+//        }
+//        ch4.isChecked() -> {
+//            Collections.sort(dataholder, titleDescendingComparator)
+//            madapter.notifyDataSetChanged()
+//            bottomsheet.dismiss()
+//
+//        }
+//        else -> {
+////                    madapter
+//            dataholder.clear()
+//            dataholder.addAll(tempDH)
+//            //dataholder = tempDH
+//            Log.e("debug-> dataholder", dataholder.size.toString())
+//            Log.e("debug -> tempDH", tempDH.size.toString())
+//            madapter.notifyDataSetChanged()
+//            //     Toast.makeText(this,dataholder.size,Toast.LENGTH_LONG).show()
+//            bottomsheet.dismiss()
+//        }
+//
+//    }
+//
+//}

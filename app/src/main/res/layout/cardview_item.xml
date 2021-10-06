@@ -19,8 +19,8 @@
         android:layout_margin="10dp"
         android:src="@drawable/ic_launcher_background"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tvDeleteItem"
         app:layout_constraintTop_toTopOf="parent"/>
+<!--        app:layout_constraintBottom_toTopOf="@id/tvDeleteItem"-->
 
     <TextView
         android:id="@+id/tv_Header"
@@ -44,6 +44,7 @@
         android:fontFamily="@font/lato"
         android:text="HeadLines of the news"
         android:textSize="16dp"
+        android:layout_margin="10dp"
         app:layout_constraintBottom_toTopOf="@id/tvdate"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -51,17 +52,17 @@
         app:layout_constraintTop_toBottomOf="@id/tv_Header"
         app:layout_constraintVertical_bias="0.0" />
 
-    <TextView
-        android:id="@+id/tvDeleteItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Delete"
-        android:drawableStart="@drawable/ic_baseline_delete_24"
-        android:textColor="@color/purple_500"
-        android:layout_marginStart="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginEnd="10dp"/>
+<!--    <TextView-->
+<!--        android:id="@+id/tvDeleteItem"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Delete"-->
+<!--        android:drawableStart="@drawable/ic_baseline_delete_24"-->
+<!--        android:textColor="@color/purple_500"-->
+<!--        android:layout_marginStart="10dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        android:layout_marginEnd="10dp"/>-->
     <TextView
         android:id="@+id/tvdate"
         android:layout_width="wrap_content"

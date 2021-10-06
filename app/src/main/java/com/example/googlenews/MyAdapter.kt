@@ -17,6 +17,14 @@ import com.example.googlenews.DataModel.DataModel
 
 class MyAdapter(val onclicklistener: onDeleteListener) :
     PagingDataAdapter<Article,MyAdapter.ViewHolder>(DiffCallback()) {
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(getItem(position)!!)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.cardview_item, parent, false)
+        return ViewHolder(v,onclicklistener)    }
     inner class ViewHolder(itemView: View,onitemclicklistener:onDeleteListener) : RecyclerView.ViewHolder(itemView) {
         fun bind(item: Article) {
             itemTitle.text = item.title
@@ -25,27 +33,34 @@ class MyAdapter(val onclicklistener: onDeleteListener) :
             Glide.with(itemImage)
                 .load(item.urlToImage)
                 .into(itemImage)
+            itemView.setOnClickListener {
+                val position: Int = adapterPosition
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse(item.url)
+                startActivity(itemView.context, intent, null)
+            }
+
         }
 
         val itemImage: ImageView = itemView.findViewById(R.id.iv_image)
         val itemTitle: TextView = itemView.findViewById(R.id.tv_Header)
         val itemDetails: TextView = itemView.findViewById(R.id.tv_HeadLines)
         val date: TextView = itemView.findViewById(R.id.tvdate)
-        val deleteItem: TextView = itemView.findViewById(R.id.tvDeleteItem)
+//        val deleteItem: TextView = itemView.findViewById(R.id.tvDeleteItem)
 
-        init {
-            itemView.setOnClickListener {
-                val position: Int = adapterPosition
-                val intent = Intent(Intent.ACTION_VIEW)
-               // intent.data = Uri.parse(Article[position].url)
-                startActivity(itemView.context, intent, null)
-            }
-            deleteItem.setOnClickListener{
-                onitemclicklistener.deleteItem(adapterPosition)
-                notifyDataSetChanged()
-            }
+//        init {
+//            itemView.setOnClickListener {
+//                val position: Int = adapterPosition
+//                val intent = Intent(Intent.ACTION_VIEW)
+//               //intent.data = Uri.parse(Article[position].url)
+//                startActivity(itemView.context, intent, null)
+//            }
+////            deleteItem.setOnClickListener{
+////                onitemclicklistener.deleteItem(adapterPosition)
+////                notifyDataSetChanged()
+//        }
 
-    }
+//    }
 
 //    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 //
@@ -72,16 +87,4 @@ class DiffCallback:DiffUtil.ItemCallback<Article>() {
 return oldItem==newItem
     }
 }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position)!!)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.cardview_item, parent, false)
-        return ViewHolder(v,onclicklistener)    }
-//    companion object {
-//        val article=Article
-//    }
-
 }

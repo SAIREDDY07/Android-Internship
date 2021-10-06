@@ -4,30 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:layout_editor_absoluteX="0dp"
-    app:circularflow_defaultRadius="20dp"
     android:background="@drawable/rounded_edge"
+    tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="-11dp">
-
-    <TextView
-        android:id="@+id/tvsortbydate"
-        android:layout_width="94dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginLeft="12dp"
-        android:text="Sort by date"
-        app:layout_constraintBaseline_toBaselineOf="@+id/dateAscending"
-        app:layout_constraintLeft_toLeftOf="parent" />
 
     <CheckBox
         android:id="@+id/dateAscending"
         android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_marginLeft="12dp"
         android:layout_marginTop="8dp"
-        android:text="Ascending"
-        app:layout_constraintLeft_toRightOf="@id/tvsortbydate"
+        android:text="PublishedAt"
+        app:layout_constraintEnd_toStartOf="@+id/datedescending"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <CheckBox
@@ -37,40 +27,32 @@
         android:layout_margin="10dp"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="8dp"
-        android:text="Descending"
-        app:layout_constraintLeft_toRightOf="@id/dateAscending"
+        android:text="Relevancy"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/dateAscending"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvsortbytitle"
-        android:layout_width="89dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Sort by title"
-        app:layout_constraintBaseline_toBaselineOf="@+id/titleAscending"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/titleAscending" />
 
     <CheckBox
         android:id="@+id/titleAscending"
         android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_marginLeft="12dp"
         android:layout_marginTop="8dp"
-        android:text="Ascending"
-        app:layout_constraintLeft_toRightOf="@id/tvsortbytitle"
+        android:text="Popularity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dateAscending" />
 
-    <CheckBox
-        android:id="@+id/titledescending"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Descending"
-        app:layout_constraintLeft_toRightOf="@id/titleAscending"
-        app:layout_constraintTop_toBottomOf="@id/datedescending" />
+    <!--    <CheckBox-->
+    <!--        android:id="@+id/titledescending"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_margin="10dp"-->
+    <!--        android:text="Descending"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintLeft_toRightOf="@id/titleAscending"-->
+    <!--        app:layout_constraintTop_toBottomOf="@id/datedescending" />-->
 
     <Button
         android:id="@+id/btnApply"
@@ -93,5 +75,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/btnApply"
-        app:layout_constraintTop_toBottomOf="@id/titledescending" />
+        app:layout_constraintTop_toBottomOf="@id/titleAscending" />
 </androidx.constraintlayout.widget.ConstraintLayout>
