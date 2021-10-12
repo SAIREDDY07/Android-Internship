@@ -1,81 +1,69 @@
-package com.example.googlenews
+package com.example.googlenews.Fragment
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.*
+import android.view.*
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import androidx.paging.PagingData
-import androidx.paging.filter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.googlenews.Adapter.HomePageAdapter
 import com.example.googlenews.Api.Article
 import com.example.googlenews.DataModel.DataModel
-import com.example.googlenews.DataModel.DataModel.Companion.dateAscendingComparator
-import com.example.googlenews.DataModel.DataModel.Companion.dateDescendingComparator
-import com.example.googlenews.DataModel.DataModel.Companion.titleAscendingComparator
-import com.example.googlenews.DataModel.DataModel.Companion.titleDescendingComparator
+import com.example.googlenews.Db.User
+import com.example.googlenews.Db.UserViewModel
+import com.example.googlenews.Network.HomePageViewModel
+import com.example.googlenews.R
+import com.example.googlenews.UI.LoginActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okio.Utf8.size
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.gson.GsonConverterFactory.create
-import java.net.URI.create
-import java.nio.file.Files.size
-import java.util.*
-import kotlin.collections.ArrayList
 
 
-class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
+class HomePageFragment : Fragment(), HomePageAdapter.onDeleteListener {
     lateinit var recyclerView: RecyclerView
     lateinit var bottomsheet: BottomSheetDialog
-    private lateinit var dataholder: ArrayList<DataModel>
-    private lateinit var tempDH: ArrayList<DataModel>
     lateinit var ch1: CheckBox
     lateinit var ch2: CheckBox
     lateinit var ch3: CheckBox
-    lateinit var ch4: CheckBox
     lateinit var apply: Button
     lateinit var clear: Button
     lateinit var count: TextView
-    lateinit var madapter: MyAdapter
-
-
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home_page)
-        recyclerView = findViewById(R.id.rv)
-        val floatingButton: FloatingActionButton = findViewById(R.id.fabFilter)
-        val load: ProgressBar =findViewById(R.id.loadprogressbar)
-        dataholder = ArrayList()
-        tempDH = ArrayList()
-        count = findViewById(R.id.itemcount)
-        madapter = MyAdapter( this)
-        makeApiRequest("")
+    lateinit var madapter: HomePageAdapter
+    lateinit var mUserViewModel: UserViewModel
+    private lateinit var auth : FirebaseAuth
+    var num:Int = 0
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_home_page, container, false)
+        recyclerView = view.findViewById(R.id.rv)
+        auth= Firebase.auth
+        val floatingButton: FloatingActionButton = view.findViewById(R.id.fabFilter)
+        val load: ProgressBar = view.findViewById(R.id.loadprogressbar)
         setupRecyclerView()
+        mUserViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
+        makeApiRequest("")
         createBottomSheet()
-        madapter.addLoadStateListener {loadState ->
+        madapter.addLoadStateListener { loadState ->
 
-
-
-            if (loadState.refresh is LoadState.Loading){
+            if (loadState.refresh is LoadState.Loading) {
                 load.visibility = View.VISIBLE
-            }
-            else{
+            } else {
+//                floatingButton.visibility=View.VISIBLE
                 load.visibility = View.GONE
 
                 // getting the error
@@ -95,22 +83,22 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
             bottomsheet.show()
         }
         apply.setOnClickListener {
-            when{
-                ch1.isChecked ->{
+            when {
+                ch1.isChecked -> {
                     makeApiRequest("publishedAt")
                     bottomsheet.dismiss()
                 }
-                ch2.isChecked ->{
+                ch2.isChecked -> {
                     makeApiRequest("relevancy")
                     bottomsheet.dismiss()
 
                 }
-                ch3.isChecked ->{
+                ch3.isChecked -> {
                     makeApiRequest("popularity")
                     bottomsheet.dismiss()
 
                 }
-                else ->{
+                else -> {
                     makeApiRequest("")
                     bottomsheet.dismiss()
 
@@ -121,19 +109,19 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
             ch1.setChecked(false)
             ch2.setChecked(false)
             ch3.setChecked(false)
-            ch4.setChecked(false)
 
         }
+        return view
     }
 
-
+    @SuppressLint("InflateParams")
     private fun createBottomSheet() {
-        val v = LayoutInflater.from(this).inflate(R.layout.bottom_sheet, null)
-        bottomsheet = BottomSheetDialog(this)
+        val v = LayoutInflater.from(context).inflate(R.layout.bottom_sheet, null)
+        bottomsheet = context?.let { BottomSheetDialog(it) }!!
         ch1 = v.findViewById(R.id.dateAscending)
         ch2 = v.findViewById(R.id.datedescending)
         ch3 = v.findViewById(R.id.titleAscending)
-       // ch4 = v.findViewById(R.id.titledescending)
+        // ch4 = v.findViewById(R.id.titledescending)
         apply = v.findViewById(R.id.btnApply)
         clear = v.findViewById(R.id.btnClear)
         bottomsheet.setContentView(v)
@@ -141,43 +129,58 @@ class HomePageActivity : AppCompatActivity(), MyAdapter.onDeleteListener {
     }
 
     private fun setupRecyclerView() {
-        recyclerView.layoutManager = LinearLayoutManager(applicationContext)
-
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        madapter = HomePageAdapter(this)
         recyclerView.adapter = madapter
     }
 
-    private fun addToList(
-        title: String,
-        details: String,
-        image: String,
-        link: String,
-        dateandtime: String
-    ) {
-        dataholder.add(DataModel(title, details, image, link, dateandtime))
-        tempDH.add(DataModel(title, details, image, link, dateandtime))
-    }
 
-    private fun makeApiRequest(value:String) {
+    private fun makeApiRequest(value: String) {
 
-        val viewModel  = ViewModelProvider(this).get(HomePageViewModelActivity::class.java)
+        val viewModel = ViewModelProvider(this).get(HomePageViewModel::class.java)
         lifecycleScope.launchWhenCreated {
-            viewModel.getList(value).collectLatest   {
+            viewModel.getList(value).collectLatest {
                 madapter.submitData(it)
             }
         }
     }
 
-    override fun deleteItem(position: Int) {
-        dataholder.removeAt(position)
-        count.setText(dataholder.size.toString())
-        tempDH.removeAt(position)
-        Log.e("DataSize", dataholder.size.toString())
 
+    override fun add(item: Article) {
+        val user = User(num++,
+            item.author,
+            item.content,
+            item.description,
+            item.publishedAt,
+//            item.source,
+            item.title,
+            item.url,
+            item.urlToImage
+        )
+        mUserViewModel.addUser(user)
     }
 
 
 }
+//
+//    override fun deleteItem(position: Int) {
+//        dataholder.removeAt(position)
+//        count.setText(dataholder.size.toString())
+//        tempDH.removeAt(position)
+//        Log.e("DataSize", dataholder.size.toString())
+//
+//    }
 
+//    private fun addToList(
+//        title: String,
+//        details: String,
+//        image: String,
+//        link: String,
+//        dateandtime: String
+//    ) {
+//        dataholder.add(DataModel(title, details, image, link, dateandtime))
+//        tempDH.add(DataModel(title, details, image, link, dateandtime))
+//    }
 
 //            var apiInterface:ApiInterface=api.create(ApiInterface::class.java)
 //        var call : Call<String> =apiInterface.STRING_CALL(page, limit)

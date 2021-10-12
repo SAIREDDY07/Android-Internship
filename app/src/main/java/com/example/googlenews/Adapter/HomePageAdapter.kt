@@ -1,4 +1,4 @@
-package com.example.googlenews
+package com.example.googlenews.Adapter
 
 import android.content.Intent
 import android.net.Uri
@@ -7,29 +7,40 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.ToggleButton
 import androidx.core.content.ContextCompat.startActivity
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.googlenews.Api.Article
-import com.example.googlenews.DataModel.DataModel
+import com.example.googlenews.R
 
-class MyAdapter(val onclicklistener: onDeleteListener) :
-    PagingDataAdapter<Article,MyAdapter.ViewHolder>(DiffCallback()) {
-
+class HomePageAdapter(val onclicklistener: onDeleteListener) :
+    PagingDataAdapter<Article, HomePageAdapter.ViewHolder>(DiffCallback()) {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position)!!)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.cardview_item, parent, false)
-        return ViewHolder(v,onclicklistener)    }
-    inner class ViewHolder(itemView: View,onitemclicklistener:onDeleteListener) : RecyclerView.ViewHolder(itemView) {
+        return ViewHolder(v, onclicklistener)
+    }
+
+    inner class ViewHolder(itemView: View, onitemclicklistener: onDeleteListener) :
+        RecyclerView.ViewHolder(itemView) {
+        val itemImage: ImageView = itemView.findViewById(R.id.iv_image)
+        val itemTitle: TextView = itemView.findViewById(R.id.tv_Header)
+        val itemDetails: TextView = itemView.findViewById(R.id.tv_HeadLines)
+        val date: TextView = itemView.findViewById(R.id.tvdate)
+        val bookmarkItem: ToggleButton = itemView.findViewById(R.id.iv_favorite)
+//        val deleteItem: TextView = itemView.findViewById(R.id.tvDeleteItem)
+
+
         fun bind(item: Article) {
             itemTitle.text = item.title
             itemDetails.text = item.description
-            date.text=item.publishedAt
+            date.text = item.publishedAt
             Glide.with(itemImage)
                 .load(item.urlToImage)
                 .into(itemImage)
@@ -39,14 +50,27 @@ class MyAdapter(val onclicklistener: onDeleteListener) :
                 intent.data = Uri.parse(item.url)
                 startActivity(itemView.context, intent, null)
             }
-
+            bookmarkItem.setOnClickListener {
+                onclicklistener.add(item)
+            }
         }
 
-        val itemImage: ImageView = itemView.findViewById(R.id.iv_image)
-        val itemTitle: TextView = itemView.findViewById(R.id.tv_Header)
-        val itemDetails: TextView = itemView.findViewById(R.id.tv_HeadLines)
-        val date: TextView = itemView.findViewById(R.id.tvdate)
-//        val deleteItem: TextView = itemView.findViewById(R.id.tvDeleteItem)
+    }
+
+    interface onDeleteListener {
+        fun add(item: Article)
+    }
+
+    class DiffCallback : DiffUtil.ItemCallback<Article>() {
+        override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
+            return oldItem.title == newItem.title
+        }
+
+        override fun areContentsTheSame(oldItem: Article, newItem: Article): Boolean {
+            return oldItem == newItem
+        }
+    }
+}
 
 //        init {
 //            itemView.setOnClickListener {
@@ -72,19 +96,3 @@ class MyAdapter(val onclicklistener: onDeleteListener) :
 ////        Glide.with(holder.itemImage).load(dataholder[position].image).into(holder.itemImage)
 ////        holder.date.text=dataholder[position].dateandtime
 //    }
-
-
-    }
-    interface onDeleteListener {
-        fun deleteItem(position: Int)
-    }
-class DiffCallback:DiffUtil.ItemCallback<Article>() {
-    override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
-        return oldItem.title==newItem.title
-    }
-
-    override fun areContentsTheSame(oldItem: Article, newItem: Article): Boolean {
-return oldItem==newItem
-    }
-}
-}

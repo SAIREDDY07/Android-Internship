@@ -1,4 +1,4 @@
-package com.example.googlenews
+package com.example.googlenews.UI
 
 
 import android.content.ContentValues
@@ -8,12 +8,15 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import com.example.googlenews.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class LoginActivity : AppCompatActivity() {
     lateinit var mbutton: Button
@@ -35,6 +38,9 @@ class LoginActivity : AppCompatActivity() {
         mAuth = FirebaseAuth.getInstance()
         createRequest()
         firebase = FirebaseAuth.getInstance()
+        if(firebase.currentUser!=null){
+            startActivity(Intent(this,MainActivity::class.java))
+        }
         mbutton.setOnClickListener(View.OnClickListener {
             val username: String
             val password: String
@@ -96,7 +102,7 @@ class LoginActivity : AppCompatActivity() {
                     val user = mAuth.currentUser
                     Log.w(ContentValues.TAG, "signInWithCredential:Successful ", task.exception)
                     progressBar.visibility=View.GONE
-                    val intent = Intent(applicationContext, HomePageActivity::class.java)
+                    val intent = Intent(applicationContext, MainActivity::class.java)
                     startActivity(intent)
                 } else {
                     progressBar.visibility=View.GONE
